@@ -1,7 +1,7 @@
 import QRCodeSVG from "react-qr-code";
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip.tsx";
 
-export default function QrCode() {
+export default function QrCode({value} : {value: string}) {
     return (
         <TooltipProvider>
             <Tooltip>
@@ -9,7 +9,7 @@ export default function QrCode() {
                     <div className={"rounded-lg border bg-white w-fit flex justify-center"}>
                         <QRCodeSVG
                             className={"m-6"}
-                            value={"based tech stack (next.js better tho)"}
+                            value={value}
                         />
                     </div>
                 </TooltipTrigger>

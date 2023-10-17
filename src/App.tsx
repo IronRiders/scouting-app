@@ -1,7 +1,9 @@
 import './App.css'
 import {ThemeProvider} from "@/components/theme-provider.tsx";
 import Header from "@/components/header.tsx";
-import QrCode from "@/components/qr-code.tsx";
+import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs.tsx";
+import Match from "@/components/match.tsx";
+import Pit from "@/components/pit.tsx";
 
 function App() {
   return (
@@ -11,11 +13,20 @@ function App() {
       >
         <div>
             <Header />
-            <div className={"container relative"}>
-                <div className={"m-4"}>
-                    <QrCode />
-                </div>
-            </div>
+            <main className={"container relative"}>
+                <Tabs defaultValue={"match"} className={"my-4"}>
+                    <TabsList className={"w-full flex"}>
+                        <TabsTrigger value={"match"} className={"flex-1"}>Match</TabsTrigger>
+                        <TabsTrigger value={"pit"} className={"flex-1"}>Pit</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value={"match"}>
+                        <Match />
+                    </TabsContent>
+                    <TabsContent value={"pit"}>
+                        <Pit />
+                    </TabsContent>
+                </Tabs>
+            </main>
         </div>
       </ThemeProvider>
   )

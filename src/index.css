@@ -74,3 +74,28 @@
     @apply bg-background text-foreground;
   }
 }
+
+.remove-arrow::-webkit-inner-spin-button,
+.remove-arrow::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.remove-arrow {
+  -moz-appearance: textfield;
+}
+
+input.limit-width {
+  @apply md:w-1/2
+}
+
+.content-mt {
+  @apply mt-6
+}
+
+h1 {
+  @apply text-2xl md:text-4xl font-semibold
+}
+
+p {
+  @apply text-lg
+}
