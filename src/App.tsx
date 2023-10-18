@@ -27,6 +27,17 @@ function App() {
                     </TabsContent>
                 </Tabs>
             </main>
+            <footer className={"mt-12 border-t"}>
+                <p className={"container my-8"}>
+                    Build by <span className={"link-underline"}><a href={"https://github.com/ampersanded-dev"}>
+                    ampersanded
+                </a></span>
+                    . Design inspired by <span className={"link-underline"}><a href={"https://ui.shadcn.com/"}>
+                    chadcn/ui
+                </a></span>
+                    .
+                </p>
+            </footer>
         </div>
       </ThemeProvider>
   )
