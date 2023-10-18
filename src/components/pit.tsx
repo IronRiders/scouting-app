@@ -1,7 +1,7 @@
 import * as z from "zod"
 
 import {Button} from "@/components/ui/button"
-import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage,} from "@/components/ui/form"
+import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage,} from "@/components/ui/form"
 import {Input} from "@/components/ui/input"
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
@@ -10,12 +10,17 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import QrCode from "@/components/qr-code.tsx";
 import {useState} from "react";
 import {
-    AlertDialog, AlertDialogAction, AlertDialogCancel,
-    AlertDialogContent, AlertDialogDescription, AlertDialogFooter,
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
     AlertDialogTrigger
 } from "@/components/ui/alert-dialog.tsx";
+import {Textarea} from "@/components/ui/textarea.tsx";
 
 const formSchema = z.object({
     interviewer: z.string()
@@ -26,17 +31,34 @@ const formSchema = z.object({
         .max(50, "Interviewee name is too long.")
         .optional(),
     teamNumber: z.coerce.number()
-        .min(0, "Must be a valid FRC team number.")
-        .max(99999, "Must be a valid FRC team number."),
+        .int("Team number must be a whole number.")
+        .min(0, "Team number must be a valid FRC team number.")
+        .max(99999, "Team number must be a valid FRC team number."),
     teamName: z.string()
         .min(2, "Team name too short.")
         .max(50, "Team name too long."),
     rookieYear: z.coerce.number()
+        .int("Rookie year must be a whole number.")
         .min(1992, "Rookie year must be after FRC was founded.")
         .max((new Date()).getFullYear(), "Rookie year can't be in the future.")
         .optional(),
     driveBase: z.string(),
+    additionalNotes: z.string()
+        .min(2)
+        .max(500)
+        .optional(),
+    idempotencyKey: z.string().optional()
 })
+
+const defaultValues = {
+    interviewer: "",
+    interviewee: "",
+    teamNumber: NaN,
+    teamName: "",
+    rookieYear: NaN,
+    driveBase: "swerve",
+    additionalNotes: ""
+}
 
 export default function Pit() {
     const [qrCodeValue, setQrCodeValue]
@@ -44,26 +66,18 @@ export default function Pit() {
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
-        defaultValues: {
-            driveBase: "swerve"
-        },
+        defaultValues: defaultValues,
     })
 
     function onSubmit(values: z.infer<typeof formSchema>) {
+        values.idempotencyKey = (+new Date * Math.random()).toString(36).substring(0,10)
         console.log(values)
         setQrCodeValue("p" + JSON.stringify(values))
     }
 
     function handleReset() {
         setQrCodeValue(undefined)
-        form.reset({
-            interviewer: "",
-            interviewee: "",
-            teamNumber: NaN,
-            teamName: "",
-            rookieYear: NaN,
-            driveBase: "swerve"
-        })
+        form.reset(defaultValues)
         form.clearErrors()
     }
 
@@ -87,7 +101,8 @@ export default function Pit() {
                                 </FormControl>
                                 <FormMessage/>
                             </FormItem>
-                        )}/>
+                        )}
+                    />
                     <FormField
                         control={form.control}
                         name="interviewee"
@@ -103,7 +118,8 @@ export default function Pit() {
                                 </FormControl>
                                 <FormMessage/>
                             </FormItem>
-                        )}/>
+                        )}
+                    />
 
                     <SectionTitle title={"Team Information"}/>
                     <FormField
@@ -122,7 +138,8 @@ export default function Pit() {
                             </FormControl>
                                 <FormMessage/>
                             </FormItem>
-                        )}/>
+                        )}
+                    />
                     <FormField
                         control={form.control}
                         name="teamName"
@@ -137,7 +154,8 @@ export default function Pit() {
                                 </FormControl>
                                 <FormMessage/>
                             </FormItem>
-                        )}/>
+                        )}
+                    />
                     <FormField
                         control={form.control}
                         name="rookieYear"
@@ -151,11 +169,13 @@ export default function Pit() {
                                         type={"number"}
                                         pattern="[0-9]*"
                                         inputMode={"numeric"}
-                                        {...field} />
+                                        {...field}
+                                    />
                                 </FormControl>
                                 <FormMessage/>
                             </FormItem>
-                        )}/>
+                        )}
+                    />
 
                     <SectionTitle title={"Robot Information"}/>
                     <FormField
@@ -164,7 +184,11 @@ export default function Pit() {
                         render={({field}) => (
                             <FormItem className={"content-mt w-fit"}>
                                 <FormLabel>Drive Base</FormLabel>
-                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <Select
+                                    onValueChange={field.onChange}
+                                    defaultValue={field.value}
+                                    {...field}
+                                >
                                     <FormControl className={"mr-2"}>
                                         <SelectTrigger>
                                             <SelectValue placeholder="Select a drive base"/>
@@ -179,7 +203,26 @@ export default function Pit() {
                                 </Select>
                                 <FormMessage/>
                             </FormItem>
-                        )}/>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="additionalNotes"
+                        render={({field}) => (
+                            <FormItem className={"content-mt w-full xl:w-1/2"}>
+                                <FormLabel>Additional Notes</FormLabel>
+                                <FormControl className={"mr-2"}>
+                                    <Textarea
+                                        placeholder={"Their robot is have troubles with its manipulator."}
+                                        className={"limit-width h-24"}
+                                        {...field}
+                                    />
+                                </FormControl>
+                                <FormDescription>Please only enter relevant information!</FormDescription>
+                                <FormMessage/>
+                            </FormItem>
+                        )}
+                    />
 
                     <div className={"content-lr-mt"}>
                         <Button type="submit">Generate QR Code</Button>
@@ -206,8 +249,8 @@ export default function Pit() {
                         </AlertDialog>
                     </div>
                 </form>
+                <QrCode value={qrCodeValue} />
             </Form>
-            <QrCode value={qrCodeValue} />
         </>
     )
 }

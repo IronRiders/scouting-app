@@ -88,7 +88,7 @@
 }
 
 input.limit-width {
-  @apply xl:w-1/2
+  @apply xl:w-1/3
 }
 
 .content-mt {
@@ -114,3 +114,4 @@ p {
 a.link {
   @apply underline
 }
+
