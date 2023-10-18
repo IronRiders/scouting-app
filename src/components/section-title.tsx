@@ -4,7 +4,7 @@ export default function SectionTitle({title, description} : {title: string, desc
     return (
         <div className={"content-mt"}>
             <h1>{title}</h1>
-            {description == undefined ? <></> : <p className={"text-primary/60"}>{description}</p>}
+            {description == undefined ? <></> : <p className={"text-primary/60 mt-1"}>{description}</p>}
             <Separator className={"mt-1"} />
         </div>
     )

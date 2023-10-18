@@ -151,7 +151,7 @@ export default function Pit() {
 
                     <div className={"content-lr-mt"}>
                         <Button type="submit">Generate QR Code</Button>
-                        <Button className={"ml-2"} variant={"link"}>Clear form</Button>
+                        <Button className={"ml-2"} type={"reset"} variant={"link"}>Clear form</Button>
                     </div>
                 </form>
             </Form>
