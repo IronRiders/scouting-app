@@ -13,7 +13,7 @@ function App() {
       >
         <div>
             <Header />
-            <main className={"container relative"}>
+            <main className={"container relative bottom"}>
                 <Tabs defaultValue={"match"} className={"my-4"}>
                     <TabsList className={"w-full flex"}>
                         <TabsTrigger value={"match"} className={"flex-1"}>Match</TabsTrigger>
