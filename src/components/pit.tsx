@@ -9,6 +9,13 @@ import SectionTitle from "@/components/section-title.tsx";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx";
 import QrCode from "@/components/qr-code.tsx";
 import {useState} from "react";
+import {
+    AlertDialog, AlertDialogAction, AlertDialogCancel,
+    AlertDialogContent, AlertDialogDescription, AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger
+} from "@/components/ui/alert-dialog.tsx";
 
 const formSchema = z.object({
     interviewer: z.string()
@@ -16,7 +23,8 @@ const formSchema = z.object({
         .max(50, "Interviewer name is too long."),
     interviewee: z.string()
         .min(2, "Interviewee name is too short.")
-        .max(50, "Interviewee name is too long."),
+        .max(50, "Interviewee name is too long.")
+        .optional(),
     teamNumber: z.coerce.number()
         .min(0, "Must be a valid FRC team number.")
         .max(99999, "Must be a valid FRC team number."),
@@ -24,13 +32,15 @@ const formSchema = z.object({
         .min(2, "Team name too short.")
         .max(50, "Team name too long."),
     rookieYear: z.coerce.number()
-        .min(1992, "Must be after FRC was founded.")
-        .max((new Date()).getFullYear(), "Can not be in the future."),
+        .min(1992, "Rookie year must be after FRC was founded.")
+        .max((new Date()).getFullYear(), "Rookie year can't be in the future.")
+        .optional(),
     driveBase: z.string(),
 })
 
 export default function Pit() {
-    const [qrCodeValue, setQrCodeValue] = useState("")
+    const [qrCodeValue, setQrCodeValue]
+        = useState<string | undefined>(undefined)
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -44,11 +54,24 @@ export default function Pit() {
         setQrCodeValue("p" + JSON.stringify(values))
     }
 
+    function handleReset() {
+        setQrCodeValue(undefined)
+        form.reset({
+            interviewer: "",
+            interviewee: "",
+            teamNumber: NaN,
+            teamName: "",
+            rookieYear: NaN,
+            driveBase: "swerve"
+        })
+        form.clearErrors()
+    }
+
     return (
         <>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
-                    <SectionTitle title={"Interview Information"} description={undefined}/>
+                    <SectionTitle title={"Interview Information"}/>
                     <FormField
                         control={form.control}
                         name="interviewer"
@@ -58,7 +81,9 @@ export default function Pit() {
                                 <FormControl>
                                     <Input
                                         className={"limit-width"}
-                                        {...field} />
+                                        placeholder={"Salvo Bonsma"}
+                                        {...field}
+                                    />
                                 </FormControl>
                                 <FormMessage/>
                             </FormItem>
@@ -72,13 +97,15 @@ export default function Pit() {
                                 <FormControl>
                                     <Input
                                         className={"limit-width"}
-                                        {...field} />
+                                        placeholder={"Gus Self"}
+                                        {...field}
+                                    />
                                 </FormControl>
                                 <FormMessage/>
                             </FormItem>
                         )}/>
 
-                    <SectionTitle title={"Team Information"} description={undefined}/>
+                    <SectionTitle title={"Team Information"}/>
                     <FormField
                         control={form.control}
                         name="teamNumber"
@@ -89,6 +116,8 @@ export default function Pit() {
                                     className={"remove-arrow limit-width"}
                                     placeholder="4180"
                                     type={"number"}
+                                    pattern="[0-9]*"
+                                    inputMode={"numeric"}
                                     {...field} />
                             </FormControl>
                                 <FormMessage/>
@@ -120,13 +149,15 @@ export default function Pit() {
                                         className={"remove-arrow limit-width"}
                                         placeholder="2012"
                                         type={"number"}
+                                        pattern="[0-9]*"
+                                        inputMode={"numeric"}
                                         {...field} />
                                 </FormControl>
                                 <FormMessage/>
                             </FormItem>
                         )}/>
 
-                    <SectionTitle title={"Robot Information"} description={undefined}/>
+                    <SectionTitle title={"Robot Information"}/>
                     <FormField
                         control={form.control}
                         name="driveBase"
@@ -143,6 +174,7 @@ export default function Pit() {
                                         <SelectItem value="swerve">Swerve</SelectItem>
                                         <SelectItem value="tank">Tank</SelectItem>
                                         <SelectItem value="mecanum">Mecanum</SelectItem>
+                                        <SelectItem value="other">Other</SelectItem>
                                     </SelectContent>
                                 </Select>
                                 <FormMessage/>
@@ -151,7 +183,27 @@ export default function Pit() {
 
                     <div className={"content-lr-mt"}>
                         <Button type="submit">Generate QR Code</Button>
-                        <Button className={"ml-2"} type={"reset"} variant={"link"}>Clear form</Button>
+                        <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                                <Button
+                                    className={"ml-2"}
+                                    type={"button"}
+                                    variant={"link"}
+                                >Clear form</Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        This will clear the entire form!
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction onClick={handleReset}>Clear</AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
                     </div>
                 </form>
             </Form>
