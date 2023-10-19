@@ -50,23 +50,15 @@ const formSchema = z.object({
     idempotencyKey: z.string().optional()
 })
 
-const defaultValues = {
-    interviewer: "",
-    interviewee: "",
-    teamNumber: NaN,
-    teamName: "",
-    rookieYear: NaN,
-    driveBase: "swerve",
-    additionalNotes: ""
-}
-
 export default function Pit() {
     const [qrCodeValue, setQrCodeValue]
         = useState<string | undefined>(undefined)
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
-        defaultValues: defaultValues,
+        defaultValues: {
+            driveBase: "swerve"
+        }
     })
 
     function onSubmit(values: z.infer<typeof formSchema>) {
@@ -77,180 +69,176 @@ export default function Pit() {
 
     function handleReset() {
         setQrCodeValue(undefined)
-        form.reset(defaultValues)
-        form.clearErrors()
     }
 
     return (
-        <>
-            <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)}>
-                    <SectionTitle title={"Interview Information"}/>
-                    <FormField
-                        control={form.control}
-                        name="interviewer"
-                        render={({field}) => (
-                            <FormItem className={"content-mt"}>
-                                <FormLabel>Interviewer</FormLabel>
-                                <FormControl>
-                                    <Input
-                                        className={"limit-width"}
-                                        placeholder={"Salvo Bonsma"}
-                                        {...field}
-                                    />
-                                </FormControl>
-                                <FormMessage/>
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="interviewee"
-                        render={({field}) => (
-                            <FormItem className={"content-mt"}>
-                                <FormLabel>Interviewee</FormLabel>
-                                <FormControl>
-                                    <Input
-                                        className={"limit-width"}
-                                        placeholder={"Gus Self"}
-                                        {...field}
-                                    />
-                                </FormControl>
-                                <FormMessage/>
-                            </FormItem>
-                        )}
-                    />
+        <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+                <SectionTitle title={"Interview Information"}/>
+                <FormField
+                    control={form.control}
+                    name="interviewer"
+                    render={({field}) => (
+                        <FormItem className={"content-mt"}>
+                            <FormLabel>Interviewer</FormLabel>
+                            <FormControl>
+                                <Input
+                                    className={"limit-width"}
+                                    placeholder={"Salvo Bonsma"}
+                                    {...field}
+                                />
+                            </FormControl>
+                            <FormMessage/>
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="interviewee"
+                    render={({field}) => (
+                        <FormItem className={"content-mt"}>
+                            <FormLabel>Interviewee</FormLabel>
+                            <FormControl>
+                                <Input
+                                    className={"limit-width"}
+                                    placeholder={"Gus Self"}
+                                    {...field}
+                                />
+                            </FormControl>
+                            <FormMessage/>
+                        </FormItem>
+                    )}
+                />
 
-                    <SectionTitle title={"Team Information"}/>
-                    <FormField
-                        control={form.control}
-                        name="teamNumber"
-                        render={({field}) => (
-                            <FormItem className={"content-mt"}>
-                                <FormLabel>Team Number</FormLabel><FormControl>
+                <SectionTitle title={"Team Information"}/>
+                <FormField
+                    control={form.control}
+                    name="teamNumber"
+                    render={({field}) => (
+                        <FormItem className={"content-mt"}>
+                            <FormLabel>Team Number</FormLabel><FormControl>
+                            <Input
+                                className={"remove-arrow limit-width"}
+                                placeholder="4180"
+                                type={"number"}
+                                pattern="[0-9]*"
+                                inputMode={"numeric"}
+                                {...field} />
+                        </FormControl>
+                            <FormMessage/>
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="teamName"
+                    render={({field}) => (
+                        <FormItem className={"content-mt"}>
+                            <FormLabel>Team Name</FormLabel>
+                            <FormControl>
+                                <Input
+                                    className={"limit-width"}
+                                    placeholder="Iron Riders"
+                                    {...field} />
+                            </FormControl>
+                            <FormMessage/>
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="rookieYear"
+                    render={({field}) => (
+                        <FormItem className={"content-mt"}>
+                            <FormLabel>Rookie Year</FormLabel>
+                            <FormControl>
                                 <Input
                                     className={"remove-arrow limit-width"}
-                                    placeholder="4180"
+                                    placeholder="2012"
                                     type={"number"}
                                     pattern="[0-9]*"
                                     inputMode={"numeric"}
-                                    {...field} />
-                            </FormControl>
-                                <FormMessage/>
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="teamName"
-                        render={({field}) => (
-                            <FormItem className={"content-mt"}>
-                                <FormLabel>Team Name</FormLabel>
-                                <FormControl>
-                                    <Input
-                                        className={"limit-width"}
-                                        placeholder="Iron Riders"
-                                        {...field} />
-                                </FormControl>
-                                <FormMessage/>
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="rookieYear"
-                        render={({field}) => (
-                            <FormItem className={"content-mt"}>
-                                <FormLabel>Rookie Year</FormLabel>
-                                <FormControl>
-                                    <Input
-                                        className={"remove-arrow limit-width"}
-                                        placeholder="2012"
-                                        type={"number"}
-                                        pattern="[0-9]*"
-                                        inputMode={"numeric"}
-                                        {...field}
-                                    />
-                                </FormControl>
-                                <FormMessage/>
-                            </FormItem>
-                        )}
-                    />
-
-                    <SectionTitle title={"Robot Information"}/>
-                    <FormField
-                        control={form.control}
-                        name="driveBase"
-                        render={({field}) => (
-                            <FormItem className={"content-mt w-fit"}>
-                                <FormLabel>Drive Base</FormLabel>
-                                <Select
-                                    onValueChange={field.onChange}
-                                    defaultValue={field.value}
                                     {...field}
-                                >
-                                    <FormControl className={"mr-2"}>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select a drive base"/>
-                                        </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                        <SelectItem value="swerve">Swerve</SelectItem>
-                                        <SelectItem value="tank">Tank</SelectItem>
-                                        <SelectItem value="mecanum">Mecanum</SelectItem>
-                                        <SelectItem value="other">Other</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                                <FormMessage/>
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="additionalNotes"
-                        render={({field}) => (
-                            <FormItem className={"content-mt w-full xl:w-1/2"}>
-                                <FormLabel>Additional Notes</FormLabel>
-                                <FormControl className={"mr-2"}>
-                                    <Textarea
-                                        placeholder={"Their robot is have troubles with its manipulator."}
-                                        className={"limit-width h-24"}
-                                        {...field}
-                                    />
-                                </FormControl>
-                                <FormDescription>Please only enter relevant information!</FormDescription>
-                                <FormMessage/>
-                            </FormItem>
-                        )}
-                    />
+                                />
+                            </FormControl>
+                            <FormMessage/>
+                        </FormItem>
+                    )}
+                />
 
-                    <div className={"content-lr-mt"}>
-                        <Button type="submit">Generate QR Code</Button>
-                        <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                                <Button
-                                    className={"ml-2"}
-                                    type={"button"}
-                                    variant={"link"}
-                                >Clear form</Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                                <AlertDialogHeader>
-                                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                                    <AlertDialogDescription>
-                                        This will clear the entire form!
-                                    </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                    <AlertDialogAction onClick={handleReset}>Clear</AlertDialogAction>
-                                </AlertDialogFooter>
-                            </AlertDialogContent>
-                        </AlertDialog>
-                    </div>
-                </form>
-                <QrCode value={qrCodeValue} />
-            </Form>
-        </>
+                <SectionTitle title={"Robot Information"}/>
+                <FormField
+                    control={form.control}
+                    name="driveBase"
+                    render={({field}) => (
+                        <FormItem className={"content-mt w-fit"}>
+                            <FormLabel>Drive Base</FormLabel>
+                            <Select
+                                onValueChange={field.onChange}
+                                defaultValue={field.value}
+                                {...field}
+                            >
+                                <FormControl className={"mr-2"}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select a drive base"/>
+                                    </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                    <SelectItem value="swerve">Swerve</SelectItem>
+                                    <SelectItem value="tank">Tank</SelectItem>
+                                    <SelectItem value="mecanum">Mecanum</SelectItem>
+                                    <SelectItem value="other">Other</SelectItem>
+                                </SelectContent>
+                            </Select>
+                            <FormMessage/>
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="additionalNotes"
+                    render={({field}) => (
+                        <FormItem className={"content-mt w-full xl:w-1/2"}>
+                            <FormLabel>Additional Notes</FormLabel>
+                            <FormControl className={"mr-2"}>
+                                <Textarea
+                                    placeholder={"Their robot is have troubles with its manipulator."}
+                                    className={"limit-width h-24"}
+                                    {...field}
+                                />
+                            </FormControl>
+                            <FormDescription>Please only enter relevant information!</FormDescription>
+                            <FormMessage/>
+                        </FormItem>
+                    )}
+                />
+
+                <div className={"content-lr-mt"}>
+                    <Button type="submit">Generate QR Code</Button>
+                    <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                            <Button
+                                className={"ml-2"}
+                                type={"button"}
+                                variant={"link"}
+                            >Clear form</Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    This will clear the entire form!
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction onClick={handleReset}>Clear</AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
+                </div>
+            </form>
+            <QrCode value={qrCodeValue} />
+        </Form>
     )
 }
